@@ -18,7 +18,7 @@ exports.index = function(req, res)
     var condicion = ('%' + filtro + '%').replace(/ /g,'%');
     if (req.query.search) {
         models.Quiz.findAll({
-            where: ["pregunta like ?", condicion],
+            where: ["lower(pregunta) like lower(?)", condicion],
             order: [['pregunta', 'ASC']]}
         ).then(function(quizes) {    
             res.render('quizes/index', {quizes: quizes});
@@ -39,8 +39,8 @@ exports.show = function(req, res)
 //GET /quizes/:id/answer
 exports.answer = function(req, res)
 {
-    var resultado = 'Incorrecto';
-    if (req.query.respuesta === req.quiz.respuesta)
+    var resultado = 'Incorrecto';     
+    if (req.query.respuesta.toLowerCase() === req.quiz.respuesta.toLowerCase())
     {
         resultado = 'Correcto';
     }
