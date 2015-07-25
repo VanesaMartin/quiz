@@ -47,9 +47,7 @@ app.use(function(req, res, next) {
 
 // autologout
 app.use(function(req, res, next) {
-  if (req.session.user)
-  {    
-    if (req.session.user.lastconnection !== undefined)
+    if (req.session.user && req.session.user.lastconnection !== undefined)
     {       
         var diff = new Date() - new Date(req.session.user.lastconnection);               
         var diffMin = diff/(1000 * 60)       
@@ -59,9 +57,11 @@ app.use(function(req, res, next) {
             res.redirect("/login"); 
         }
     }
-    req.session.user.lastconnection = new Date();
-  }
-  next();
+    if (req.session.user)
+    {
+        req.session.user.lastconnection = new Date();
+    }
+    next();
 });
 
 app.use('/', routes);
