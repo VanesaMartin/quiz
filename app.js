@@ -45,6 +45,25 @@ app.use(function(req, res, next) {
   next();
 });
 
+// autologout
+app.use(function(req, res, next) {
+  if (req.session.user)
+  {    
+    if (req.session.user.lastconnection !== undefined)
+    {       
+        var diff = new Date() - new Date(req.session.user.lastconnection);               
+        var diffMin = diff/(1000 * 60)       
+        if (diffMin > 2)
+        {           
+            delete req.session.user;
+            res.redirect("/login"); 
+        }
+    }
+    req.session.user.lastconnection = new Date();
+  }
+  next();
+});
+
 app.use('/', routes);
 
 // catch 404 and forward to error handler
