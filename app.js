@@ -53,15 +53,24 @@ app.use(function(req, res, next) {
         var diffMin = diff/(1000 * 60)       
         if (diffMin > 2)
         {           
-            delete req.session.user;
-            res.redirect("/login"); 
+           delete req.session.user;  
+           res.render('sessions/new', {errors: {}});       
+        }else
+        {
+             req.session.user.lastconnection = new Date();
+             next();
+        }
+    }else{
+        if (req.session.user)
+        {
+            req.session.user.lastconnection = new Date();
+            next();
+        }else
+        {
+             next();
         }
     }
-    if (req.session.user)
-    {
-        req.session.user.lastconnection = new Date();
-    }
-    next();
+   
 });
 
 app.use('/', routes);
